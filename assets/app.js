@@ -391,7 +391,7 @@ function showError(id) {
   var retryBtn = document.getElementById('retry-btn');
   if (retryBtn) {
     retryBtn.addEventListener('click', function () {
-      window.location.href = window.location.pathname;
+      window.location.href = './';
     });
   }
   showView('error-view');
