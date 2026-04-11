@@ -9,21 +9,27 @@ async function init() {
   const id = rawId ? sanitizeId(rawId) : null;
 
   try {
-    const config = await fetchConfig();
-    validateConfig(config);
-    applyConfigVars(config);
-
-    if (config.site_title) {
-      document.title = config.site_title;
-    }
-
     if (id) {
-      // Phase 02 will fetch attendee data and render the certificate view
-      // fetchAttendee(id) + renderCertificateView(config, attendee) — not yet implemented
+      // Certificate branch: load config + attendee data in parallel
+      const results = await Promise.all([fetchConfig(), fetchAttendee(id)]);
+      const config = results[0];
+      const attendee = results[1];
+      validateConfig(config);
+      validateAttendee(attendee);
+      applyConfigVars(config);
+      if (config.site_title) {
+        document.title = config.site_title;
+      }
+      renderCertificateView(config, attendee);
       showView('certificate-view');
     } else {
-      // Phase 04 will render the search landing page
-      // renderSearchView(config) — not yet implemented
+      // No id: show search view
+      const config = await fetchConfig();
+      validateConfig(config);
+      applyConfigVars(config);
+      if (config.site_title) {
+        document.title = config.site_title;
+      }
       showView('search-view');
     }
   } catch (err) {
@@ -44,6 +50,25 @@ function validateConfig(config) {
   const required = ['org_name', 'primary_color', 'certificate_title'];
   for (const field of required) {
     if (!config[field]) throw new Error(`Invalid config: missing required field "${field}"`);
+  }
+}
+
+// === Attendee Loader ===
+
+async function fetchAttendee(id) {
+  const response = await fetch('data/' + id + '.json');
+  if (!response.ok) {
+    throw new Error('Certificate not found for: ' + id);
+  }
+  return response.json();
+}
+
+function validateAttendee(attendee) {
+  const required = ['certificate_id', 'name', 'email', 'workshop', 'date', 'date_iso'];
+  for (let i = 0; i < required.length; i++) {
+    if (!attendee[required[i]]) {
+      throw new Error('Attendee data is missing required field: ' + required[i]);
+    }
   }
 }
 
