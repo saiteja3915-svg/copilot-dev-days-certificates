@@ -385,6 +385,52 @@ body {
   transform: scale(0.97);
 }
 
+.pdf-download-help {
+  position: fixed;
+  top: 76px;
+  right: 20px;
+  z-index: 100;
+  width: min(320px, calc(100vw - 40px));
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(13, 27, 42, 0.96);
+  color: #ffffff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.pdf-download-help-text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.pdf-open-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.pdf-open-link:hover {
+  background: #d9bb62;
+}
+
+.pdf-open-link:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
 /* ========================================
    CERTIFICATE PAGE BACKDROP
    ======================================== */
@@ -414,6 +460,19 @@ body {
   container-type: inline-size;
 }
 
+body.pdf-exporting #certificate-view {
+  background: white;
+  padding: 0;
+}
+
+body.pdf-exporting .certificate-wrapper {
+  width: var(--pdf-export-width, 297mm);
+  max-width: none;
+  padding: 0;
+  margin: 0 auto;
+  filter: none;
+}
+
 /* A4 landscape proportions on screen (297mm x 210mm) */
 .certificate {
   width: 100%;
@@ -434,6 +493,43 @@ body {
      This fixes logos and text being invisible when 'Background graphics' is OFF */
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+}
+
+body.pdf-exporting .certificate {
+  width: var(--pdf-export-width, 297mm);
+  height: var(--pdf-export-height, 210mm);
+  aspect-ratio: auto;
+  padding: 12mm 18mm 10mm;
+  outline: none;
+  overflow: hidden;
+}
+
+.pdf-export-host {
+  position: fixed;
+  top: 0;
+  left: -200vw;
+  z-index: -1;
+  width: var(--pdf-export-width, 297mm);
+  height: var(--pdf-export-height, 210mm);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pdf-export-host .certificate-wrapper {
+  width: var(--pdf-export-width, 297mm);
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  filter: none;
+}
+
+.pdf-export-host .certificate {
+  width: var(--pdf-export-width, 297mm);
+  height: var(--pdf-export-height, 210mm);
+  aspect-ratio: auto;
+  padding: 12mm 18mm 10mm;
+  outline: none;
+  overflow: hidden;
 }
 
 /* Corner L-bracket ornaments via CSS multi-background gradients */
@@ -751,11 +847,6 @@ body {
     print-color-adjust: exact;
   }
 
-  /* Restore navy for print — gold prints poorly on most printers */
-  .cert-name {
-    color: var(--primary-color);
-  }
-
   /* QR canvas renders exactly as on screen — needed for clean PDF output */
   .cert-qr canvas,
   .cert-qr img {
@@ -790,6 +881,14 @@ body {
     width: calc(100% - 32px);
     justify-content: center;
     border-radius: 10px;
+  }
+
+  .pdf-download-help {
+    top: auto;
+    right: 16px;
+    bottom: 72px;
+    left: 16px;
+    width: auto;
   }
 
   /* Add bottom padding so button doesn't overlap certificate */
